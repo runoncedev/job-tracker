@@ -168,7 +168,14 @@ function App() {
                 </div>
               </div>
               <div className="text-gray-500 text-sm">
-                {application.applied_date}
+                {new Date(application.applied_date).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }
+                )}
               </div>
             </div>
             <button className="text-gray-400 p-1.5 rounded-sm hover:bg-gray-100 m-2">
