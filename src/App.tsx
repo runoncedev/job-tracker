@@ -17,7 +17,7 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { useFormStatus } from "react-dom";
-import type { Database } from "../database.types";
+import type { Database, Tables } from "../database.types";
 
 const queryClient = new QueryClient();
 
@@ -51,7 +51,11 @@ const AddJobButtonChildren = () => {
   );
 };
 
-const FormFields = () => {
+const FormFields = ({
+  application,
+}: {
+  application?: Tables<"applications"> | null;
+}) => {
   return (
     <>
       <label htmlFor="title">Title</label>
@@ -59,12 +63,15 @@ const FormFields = () => {
         id="title"
         name="title"
         type="text"
+        defaultValue={application?.company || ""}
         className="border border-gray-300 rounded-md p-2"
+        required
       />
       <label htmlFor="status">Status</label>
       <select
         id="status"
         name="status"
+        defaultValue={application?.status || "active"}
         className="border border-gray-300 rounded-md p-2"
       >
         <option value="active">Active</option>
@@ -74,21 +81,24 @@ const FormFields = () => {
       <textarea
         id="notes"
         name="notes"
+        defaultValue={application?.notes || ""}
         className="border border-gray-300 rounded-md p-2"
       />
     </>
   );
 };
 
-const FormSubmitButton = () => {
+const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
   const { pending } = useFormStatus();
+
+  console.log("pending!!", pending);
 
   return (
     <button
       className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300"
       disabled={pending}
     >
-      {pending ? "Submitting..." : "Submit"}
+      {pending ? "Submitting..." : isEditing ? "Update" : "Submit"}
     </button>
   );
 };
@@ -106,10 +116,33 @@ const handleAddJob = async (formData: FormData) => {
   });
 };
 
-const Applications = ({ onEditClick }: { onEditClick: () => void }) => {
+const handleUpdateJob = async (formData: FormData, applicationId: string) => {
+  const title = formData.get("title");
+  const status = formData.get("status");
+  const notes = formData.get("notes");
+
+  await supabase
+    .from("applications")
+    .update({
+      company: typeof title === "string" ? title : "",
+      status: typeof status === "string" ? status : "",
+      notes: typeof notes === "string" ? notes : "",
+    })
+    .eq("id", applicationId);
+};
+
+type ApplicationsProps = {
+  onEditClick: (application: Tables<"applications">) => void;
+};
+
+const Applications = ({ onEditClick }: ApplicationsProps) => {
   const { isPending, data } = useQuery({
     queryKey: ["applications"],
-    queryFn: async () => await supabase.from("applications").select("*"),
+    queryFn: async () =>
+      await supabase
+        .from("applications")
+        .select("*")
+        .order("updated_at", { ascending: false }),
   });
 
   return (
@@ -136,10 +169,10 @@ const Applications = ({ onEditClick }: { onEditClick: () => void }) => {
         <div className="text-gray-500">No applications found</div>
       )}
       {data?.data?.map((application) => (
-        <div className="border border-gray-300 rounded-md flex justify-between items-start gap-2">
-          <div className="flex flex-col gap-2  py-4 pl-4 grow">
+        <div className="border border-gray-300 rounded-md flex justify-between items-start gap-2 sm:basis-[250px] sm:max-w-[250px]">
+          <div className="flex flex-col gap-2 py-4 pl-4 grow min-w-0">
             <div className="flex gap-4 items-center">
-              <div className="text-lg font-semibold text-gray-900">
+              <div className="text-lg font-semibold text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap flex-grow">
                 {application.company}
               </div>
               <div className="text-white bg-green-500 rounded-md px-2">
@@ -159,7 +192,7 @@ const Applications = ({ onEditClick }: { onEditClick: () => void }) => {
           </div>
           <button
             className="text-gray-400 p-1.5 rounded-sm hover:bg-gray-100 m-2"
-            onClick={onEditClick}
+            onClick={() => onEditClick(application)}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -186,18 +219,33 @@ const Applications = ({ onEditClick }: { onEditClick: () => void }) => {
 type ApplicationFormProps = {
   children: React.ReactNode;
   className?: string;
+  application?: Tables<"applications"> | null;
+  onSuccess: () => void;
 };
 
-const ApplicationForm = ({ children, className }: ApplicationFormProps) => {
+const ApplicationForm = ({
+  children,
+  className,
+  application,
+  onSuccess,
+}: ApplicationFormProps) => {
   const mutation = useMutation({
-    mutationFn: handleAddJob,
+    mutationFn: (formData: FormData) => {
+      if (application) {
+        return handleUpdateJob(formData, application.id);
+      } else {
+        return handleAddJob(formData);
+      }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["applications"] });
+
+      onSuccess();
     },
   });
 
   return (
-    <form action={mutation.mutate} className={className}>
+    <form action={mutation.mutateAsync} className={className}>
       {children}
     </form>
   );
@@ -205,37 +253,53 @@ const ApplicationForm = ({ children, className }: ApplicationFormProps) => {
 
 function App() {
   const [open, setOpen] = useState(false);
+  const [editingApplication, setEditingApplication] =
+    useState<Tables<"applications"> | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
-  //   const fetchApplications = async () => {
-  //     setIsLoading(true);
 
-  //     const { data } = await supabase.from("applications").select("*");
+  const handleEditClick = (application: Tables<"applications">) => {
+    setEditingApplication(application);
+    setOpen(true);
+  };
 
-  //     setIsLoading(false);
-  //     setApplications(data ?? []);
-  //   };
+  const handleAddClick = () => {
+    setEditingApplication(null);
+    setOpen(true);
+  };
 
-  //   fetchApplications();
-  // }, []);
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen);
+
+    // if (!newOpen) {
+    //   setEditingApplication(null);
+    // }
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <div className="max-w-[800px] mx-auto p-4 flex flex-col gap-4 h-dvh">
         <div className="self-end sm:self-start">
           {isDesktop && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} onOpenChange={handleOpenChange}>
               <DialogTrigger asChild>
-                <button className={addJobButtonClassName}>
+                <button
+                  className={addJobButtonClassName}
+                  onClick={handleAddClick}
+                >
                   <AddJobButtonChildren />
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
-                <ApplicationForm className="flex flex-col gap-4">
+                <ApplicationForm
+                  className="flex flex-col gap-4"
+                  application={editingApplication}
+                  onSuccess={() => setOpen(false)}
+                >
                   <div className="flex flex-col gap-2">
-                    <FormFields />
+                    <FormFields application={editingApplication} />
                   </div>
                   <div className="flex gap-2 flex-col">
-                    <FormSubmitButton />
+                    <FormSubmitButton isEditing={!!editingApplication} />
                     <button className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
                       Cancel
                     </button>
@@ -245,18 +309,27 @@ function App() {
             </Dialog>
           )}
           {!isDesktop && (
-            <Drawer open={open} onOpenChange={setOpen}>
-              <DrawerTrigger className={addJobButtonClassName}>
+            <Drawer open={open} onOpenChange={handleOpenChange}>
+              <DrawerTrigger
+                className={addJobButtonClassName}
+                onClick={handleAddClick}
+              >
                 <AddJobButtonChildren />
               </DrawerTrigger>
               <DrawerContent>
-                <ApplicationForm>
+                <ApplicationForm
+                  application={editingApplication}
+                  onSuccess={() => setOpen(false)}
+                >
                   <div className="flex flex-col gap-2 px-4">
-                    <FormFields />
+                    <FormFields application={editingApplication} />
                   </div>
                   <DrawerFooter className="flex gap-2">
-                    <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
-                      Submit
+                    <button
+                      type="submit"
+                      className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300"
+                    >
+                      {editingApplication ? "Update" : "Submit"}
                     </button>
                     <DrawerClose className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
                       Cancel
@@ -267,7 +340,7 @@ function App() {
             </Drawer>
           )}
         </div>
-        <Applications onEditClick={() => setOpen(true)} />
+        <Applications onEditClick={handleEditClick} />
       </div>
     </QueryClientProvider>
   );
