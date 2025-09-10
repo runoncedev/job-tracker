@@ -106,7 +106,7 @@ const handleAddJob = async (formData: FormData) => {
   });
 };
 
-const Applications = () => {
+const Applications = ({ onEditClick }: { onEditClick: () => void }) => {
   const { isPending, data } = useQuery({
     queryKey: ["applications"],
     queryFn: async () => await supabase.from("applications").select("*"),
@@ -157,7 +157,10 @@ const Applications = () => {
               )}
             </div>
           </div>
-          <button className="text-gray-400 p-1.5 rounded-sm hover:bg-gray-100 m-2">
+          <button
+            className="text-gray-400 p-1.5 rounded-sm hover:bg-gray-100 m-2"
+            onClick={onEditClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -242,7 +245,7 @@ function App() {
             </Dialog>
           )}
           {!isDesktop && (
-            <Drawer>
+            <Drawer open={open} onOpenChange={setOpen}>
               <DrawerTrigger className={addJobButtonClassName}>
                 <AddJobButtonChildren />
               </DrawerTrigger>
@@ -264,7 +267,7 @@ function App() {
             </Drawer>
           )}
         </div>
-        <Applications />
+        <Applications onEditClick={() => setOpen(true)} />
       </div>
     </QueryClientProvider>
   );
