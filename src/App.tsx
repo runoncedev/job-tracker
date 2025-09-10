@@ -134,7 +134,7 @@ function App() {
           </Drawer>
         )}
       </div>
-      <div className="flex gap-2 sm:flex-row flex-col flex-grow">
+      <div className="flex gap-2 sm:flex-row flex-col flex-grow items-stretch sm:items-start">
         {isLoading && (
           <div className="text-gray-300 self-stretch flex items-center justify-center h-full">
             <svg
