@@ -13,6 +13,7 @@ import { createClient } from "@supabase/supabase-js";
 import {
   QueryClient,
   QueryClientProvider,
+  useMutation,
   useQuery,
 } from "@tanstack/react-query";
 import { useFormStatus } from "react-dom";
@@ -179,6 +180,26 @@ const Applications = () => {
   );
 };
 
+type ApplicationFormProps = {
+  children: React.ReactNode;
+  className?: string;
+};
+
+const ApplicationForm = ({ children, className }: ApplicationFormProps) => {
+  const mutation = useMutation({
+    mutationFn: handleAddJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["applications"] });
+    },
+  });
+
+  return (
+    <form action={mutation.mutate} className={className}>
+      {children}
+    </form>
+  );
+};
+
 function App() {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -206,7 +227,7 @@ function App() {
                 </button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
-                <form className="flex flex-col gap-4" action={handleAddJob}>
+                <ApplicationForm className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
                     <FormFields />
                   </div>
@@ -216,7 +237,7 @@ function App() {
                       Cancel
                     </button>
                   </div>
-                </form>
+                </ApplicationForm>
               </DialogContent>
             </Dialog>
           )}
@@ -226,7 +247,7 @@ function App() {
                 <AddJobButtonChildren />
               </DrawerTrigger>
               <DrawerContent>
-                <form>
+                <ApplicationForm>
                   <div className="flex flex-col gap-2 px-4">
                     <FormFields />
                   </div>
@@ -238,7 +259,7 @@ function App() {
                       Cancel
                     </DrawerClose>
                   </DrawerFooter>
-                </form>
+                </ApplicationForm>
               </DrawerContent>
             </Drawer>
           )}
