@@ -48,18 +48,40 @@ const FormChildren = () => {
       <label htmlFor="title">Title</label>
       <input
         id="title"
+        name="title"
         type="text"
         className="border border-gray-300 rounded-md p-2"
       />
       <label htmlFor="status">Status</label>
-      <select id="status" className="border border-gray-300 rounded-md p-2">
+      <select
+        id="status"
+        name="status"
+        className="border border-gray-300 rounded-md p-2"
+      >
         <option value="active">Active</option>
         <option value="inactive">Inactive</option>
       </select>
       <label htmlFor="notes">Notes</label>
-      <textarea id="notes" className="border border-gray-300 rounded-md p-2" />
+      <textarea
+        id="notes"
+        name="notes"
+        className="border border-gray-300 rounded-md p-2"
+      />
     </>
   );
+};
+
+const handleAddJob = async (formData: FormData) => {
+  const title = formData.get("title");
+  const status = formData.get("status");
+  const notes = formData.get("notes");
+
+  await supabase.from("applications").insert({
+    company: typeof title === "string" ? title : "",
+    status: typeof status === "string" ? status : "",
+    notes: typeof notes === "string" ? notes : "",
+    applied_date: new Date().toISOString(),
+  });
 };
 
 function App() {
@@ -95,7 +117,7 @@ function App() {
               </button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              <form className="flex flex-col gap-4">
+              <form className="flex flex-col gap-4" action={handleAddJob}>
                 <div className="flex flex-col gap-2">
                   <FormChildren />
                 </div>
