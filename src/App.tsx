@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -42,6 +35,26 @@ const AddJobButtonChildren = () => {
   );
 };
 
+const FormChildren = () => {
+  return (
+    <>
+      <label htmlFor="title">Title</label>
+      <input
+        id="title"
+        type="text"
+        className="border border-gray-300 rounded-md p-2"
+      />
+      <label htmlFor="status">Status</label>
+      <select id="status" className="border border-gray-300 rounded-md p-2">
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+      <label htmlFor="notes">Notes</label>
+      <textarea id="notes" className="border border-gray-300 rounded-md p-2" />
+    </>
+  );
+};
+
 function App() {
   const [open, setOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -56,14 +69,19 @@ function App() {
             </button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit profile</DialogTitle>
-              <DialogDescription>
-                Make changes to your profile here. Click save when you&apos;re
-                done.
-              </DialogDescription>
-            </DialogHeader>
-            Some form...
+            <form className="flex flex-col gap-4">
+              <div className="flex flex-col gap-2">
+                <FormChildren />
+              </div>
+              <div className="flex gap-2 flex-col">
+                <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
+                  Submit
+                </button>
+                <button className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
+                  Cancel
+                </button>
+              </div>
+            </form>
           </DialogContent>
         </Dialog>
       )}
@@ -75,25 +93,7 @@ function App() {
           <DrawerContent>
             <form>
               <div className="flex flex-col gap-2 px-4">
-                <label htmlFor="title">Title</label>
-                <input
-                  id="title"
-                  type="text"
-                  className="border border-gray-300 rounded-md p-2"
-                />
-                <label htmlFor="status">Status</label>
-                <select
-                  id="status"
-                  className="border border-gray-300 rounded-md p-2"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-                <label htmlFor="notes">Notes</label>
-                <textarea
-                  id="notes"
-                  className="border border-gray-300 rounded-md p-2"
-                />
+                <FormChildren />
               </div>
               <DrawerFooter className="flex gap-2">
                 <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
