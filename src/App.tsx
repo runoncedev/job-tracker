@@ -10,6 +10,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useEffect, useState } from "react";
 
 import { createClient } from "@supabase/supabase-js";
+import { useFormStatus } from "react-dom";
 import type { Database, Tables } from "../database.types";
 
 const supabaseUrl = "https://scxwpgmelmbwtljbvtwp.supabase.co";
@@ -42,7 +43,7 @@ const AddJobButtonChildren = () => {
   );
 };
 
-const FormChildren = () => {
+const FormFields = () => {
   return (
     <>
       <label htmlFor="title">Title</label>
@@ -68,6 +69,19 @@ const FormChildren = () => {
         className="border border-gray-300 rounded-md p-2"
       />
     </>
+  );
+};
+
+const FormSubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300"
+      disabled={pending}
+    >
+      {pending ? "Submitting..." : "Submit"}
+    </button>
   );
 };
 
@@ -119,12 +133,10 @@ function App() {
             <DialogContent className="sm:max-w-[425px]">
               <form className="flex flex-col gap-4" action={handleAddJob}>
                 <div className="flex flex-col gap-2">
-                  <FormChildren />
+                  <FormFields />
                 </div>
                 <div className="flex gap-2 flex-col">
-                  <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
-                    Submit
-                  </button>
+                  <FormSubmitButton />
                   <button className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
                     Cancel
                   </button>
@@ -141,7 +153,7 @@ function App() {
             <DrawerContent>
               <form>
                 <div className="flex flex-col gap-2 px-4">
-                  <FormChildren />
+                  <FormFields />
                 </div>
                 <DrawerFooter className="flex gap-2">
                   <button className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
@@ -156,7 +168,7 @@ function App() {
           </Drawer>
         )}
       </div>
-      <div className="flex gap-2 sm:flex-row flex-col flex-grow items-stretch sm:items-start">
+      <div className="flex gap-2 sm:flex-row flex-col flex-grow sm:flex-grow-0 items-stretch flex-wrap sm:items-start">
         {isLoading && (
           <div className="text-gray-300 self-stretch flex items-center justify-center h-full">
             <svg
