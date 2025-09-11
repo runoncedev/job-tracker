@@ -11,20 +11,52 @@ import { useState } from "react";
 
 import Card from "@/components/ui/card";
 import { createClient } from "@supabase/supabase-js";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-  useQuery,
-} from "@tanstack/react-query";
+import { queryCollectionOptions } from "@tanstack/query-db-collection";
+import { createCollection, useLiveQuery } from "@tanstack/react-db";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFormStatus } from "react-dom";
 import type { Database, Tables } from "../database.types";
-
-const queryClient = new QueryClient();
 
 const supabaseUrl = "https://scxwpgmelmbwtljbvtwp.supabase.co";
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+
+const queryClient = new QueryClient();
+
+const apllicationCollection = createCollection<Tables<"applications">>(
+  queryCollectionOptions({
+    queryClient,
+    queryKey: ["applications"],
+    queryFn: async () => {
+      // const response = await fetch("/api/todos");
+      // return response.json();
+
+      const { data } = await supabase.from("applications").select("*");
+
+      return data || [];
+    },
+    getKey: (item) => item.id,
+    // Handle all CRUD operations
+    onInsert: async ({ transaction }) => {
+      const { modified: newApplication } = transaction.mutations[0];
+
+      await supabase.from("applications").insert(newApplication);
+    },
+    onUpdate: async ({ transaction }) => {
+      const { original, modified } = transaction.mutations[0];
+
+      await supabase
+        .from("applications")
+        .update(modified)
+        .eq("id", original.id);
+    },
+    onDelete: async ({ transaction }) => {
+      const { original } = transaction.mutations[0];
+
+      await supabase.from("applications").delete().eq("id", original.id);
+    },
+  }),
+);
 
 const addJobButtonClassName =
   "bg-gray-200 text-gray-600 px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-300";
@@ -147,16 +179,11 @@ type ApplicationsProps = {
 };
 
 const Applications = ({ onEditClick }: ApplicationsProps) => {
-  const { isPending, data } = useQuery({
-    queryKey: ["applications"],
-    queryFn: async () =>
-      await supabase
-        .from("applications")
-        .select("*")
-        .order("updated_at", { ascending: false }),
-  });
+  const { data: liveData, isLoading: isLiveLoading } = useLiveQuery((q) =>
+    q.from({ application: apllicationCollection }),
+  );
 
-  if (isPending) {
+  if (isLiveLoading) {
     return (
       <div className="flex h-full items-center justify-center self-stretch text-gray-300">
         <svg
@@ -179,10 +206,10 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
 
   return (
     <div className="flex flex-grow flex-col flex-wrap items-stretch gap-2 sm:flex-grow-0 sm:flex-row sm:items-start">
-      {!isPending && data?.data?.length === 0 && (
+      {!isLiveLoading && liveData?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
-      {data?.data?.map((application) => (
+      {liveData?.map((application) => (
         <Card>
           <div className="flex min-w-0 flex-grow flex-col gap-2 py-1.5 pl-1.5">
             <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -243,23 +270,47 @@ const ApplicationForm = ({
   application,
   onSuccess,
 }: ApplicationFormProps) => {
-  const mutation = useMutation({
-    mutationFn: (formData: FormData) => {
-      if (application) {
-        return handleUpdateJob(formData, application.id);
-      } else {
-        return handleAddJob(formData);
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["applications"] });
+  // const mutation = useMutation({
+  //   mutationFn: (formData: FormData) => {
+  //     if (application) {
+  //       return handleUpdateJob(formData, application.id);
+  //     } else {
+  //       return handleAddJob(formData);
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["applications"] });
 
-      onSuccess();
-    },
-  });
+  //     onSuccess();
+  //   },
+  // });
+
+  const mutate = (formData: FormData) => {
+    onSuccess();
+
+    if (application) {
+      apllicationCollection.update(application.id, (draft) => {
+        draft.company = formData.get("title") as string;
+        draft.status = formData.get("status") as string;
+        draft.notes = formData.get("notes") as string;
+        draft.updated_at = new Date().toISOString();
+      });
+    } else {
+      apllicationCollection.insert({
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        deleted_at: null,
+        applied_date: new Date().toISOString(),
+        company: formData.get("title") as string,
+        status: formData.get("status") as string,
+        notes: formData.get("notes") as string,
+        updated_at: new Date().toISOString(),
+      });
+    }
+  };
 
   return (
-    <form action={mutation.mutateAsync} className={className}>
+    <form action={mutate} className={className}>
       {children}
     </form>
   );
