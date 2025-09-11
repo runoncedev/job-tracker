@@ -28,10 +28,10 @@ const apllicationCollection = createCollection<Tables<"applications">>(
     queryClient,
     queryKey: ["applications"],
     queryFn: async () => {
-      // const response = await fetch("/api/todos");
-      // return response.json();
-
-      const { data } = await supabase.from("applications").select("*");
+      const { data } = await supabase
+        .from("applications")
+        .select("*")
+        .order("updated_at", { ascending: false });
 
       return data || [];
     },
@@ -144,43 +144,17 @@ const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
   );
 };
 
-const handleAddJob = async (formData: FormData) => {
-  const title = formData.get("title");
-  const status = formData.get("status");
-  const notes = formData.get("notes");
-
-  await supabase.from("applications").insert({
-    company: typeof title === "string" ? title : "",
-    status: typeof status === "string" ? status : "",
-    notes: typeof notes === "string" ? notes : "",
-    applied_date: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
-};
-
-const handleUpdateJob = async (formData: FormData, applicationId: string) => {
-  const title = formData.get("title");
-  const status = formData.get("status");
-  const notes = formData.get("notes");
-
-  await supabase
-    .from("applications")
-    .update({
-      company: typeof title === "string" ? title : "",
-      status: typeof status === "string" ? status : "",
-      notes: typeof notes === "string" ? notes : "",
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", applicationId);
-};
-
 type ApplicationsProps = {
   onEditClick: (application: Tables<"applications">) => void;
 };
 
 const Applications = ({ onEditClick }: ApplicationsProps) => {
   const { data: liveData, isLoading: isLiveLoading } = useLiveQuery((q) =>
-    q.from({ application: apllicationCollection }),
+    q
+      .from({ application: apllicationCollection })
+      .orderBy(({ application }) => application.updated_at, {
+        direction: "desc",
+      }),
   );
 
   if (isLiveLoading) {
