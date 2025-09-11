@@ -146,26 +146,29 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
         .order("updated_at", { ascending: false }),
   });
 
+  if (isPending) {
+    return (
+      <div className="flex h-full items-center justify-center self-stretch text-gray-300">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          className="lucide lucide-loader-circle-icon lucide-loader-circle animate-spin"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-grow flex-col flex-wrap items-stretch gap-2 sm:flex-grow-0 sm:flex-row sm:items-start">
-      {isPending && (
-        <div className="flex h-full items-center justify-center self-stretch text-gray-300">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            className="lucide lucide-loader-circle-icon lucide-loader-circle animate-spin"
-          >
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-          </svg>
-        </div>
-      )}
       {!isPending && data?.data?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
