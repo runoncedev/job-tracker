@@ -9,6 +9,7 @@ import {
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useState } from "react";
 
+import Card from "@/components/ui/card";
 import { createClient } from "@supabase/supabase-js";
 import {
   QueryClient,
@@ -64,7 +65,7 @@ const FormFields = ({
         name="title"
         type="text"
         defaultValue={application?.company || ""}
-        className="border border-gray-300 rounded-md p-2"
+        className="rounded-md border border-gray-300 p-2"
         required
       />
       <label htmlFor="status">Status</label>
@@ -72,7 +73,7 @@ const FormFields = ({
         id="status"
         name="status"
         defaultValue={application?.status || "active"}
-        className="border border-gray-300 rounded-md p-2"
+        className="rounded-md border border-gray-300 p-2"
       >
         <option value="active">Active</option>
         <option value="inactive">Inactive</option>
@@ -82,7 +83,7 @@ const FormFields = ({
         id="notes"
         name="notes"
         defaultValue={application?.notes || ""}
-        className="border border-gray-300 rounded-md p-2"
+        className="rounded-md border border-gray-300 p-2"
       />
     </>
   );
@@ -95,7 +96,7 @@ const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
 
   return (
     <button
-      className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300"
+      className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
       disabled={pending}
     >
       {pending ? "Submitting..." : isEditing ? "Update" : "Submit"}
@@ -146,9 +147,9 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
   });
 
   return (
-    <div className="flex gap-2 sm:flex-row flex-col flex-grow sm:flex-grow-0 items-stretch flex-wrap sm:items-start">
+    <div className="flex flex-grow flex-col flex-wrap items-stretch gap-2 sm:flex-grow-0 sm:flex-row sm:items-start">
       {isPending && (
-        <div className="text-gray-300 self-stretch flex items-center justify-center h-full">
+        <div className="flex h-full items-center justify-center self-stretch text-gray-300">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -169,9 +170,10 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
         <div className="text-gray-500">No applications found</div>
       )}
       {data?.data?.map((application) => (
-        <div className="border border-gray-300 rounded-md flex justify-between items-start gap-2 sm:basis-[250px] sm:max-w-[250px]">
-          <div className="flex flex-col gap-2 py-4 pl-4 grow min-w-0">
-            <div className="flex gap-4 items-center">
+        <Card>
+          {/* <div className="flex border flex-col gap-2 py-4 pl-4 grow min-w-0"> */}
+          HelloHelloHelloHelloHelloHelloHelloHelloHelloHello
+          {/* <div className="flex gap-4 items-center">
               <div className="text-lg font-semibold text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap flex-grow">
                 {application.company}
               </div>
@@ -188,10 +190,10 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
                   day: "numeric",
                 },
               )}
-            </div>
-          </div>
-          <button
-            className="text-gray-400 p-1.5 rounded-sm hover:bg-gray-100 m-2"
+            </div> */}
+          {/* </div> */}
+          {/* <button
+            className="text-gray-400 border p-1.5 rounded-sm hover:bg-gray-100 m-2"
             onClick={() => onEditClick(application)}
           >
             <svg
@@ -209,8 +211,8 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
               <path d="m15 5 4 4" />
             </svg>
-          </button>
-        </div>
+          </button> */}
+        </Card>
       ))}
     </div>
   );
@@ -277,7 +279,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="max-w-[800px] mx-auto p-4 flex flex-col gap-4 h-dvh">
+      <div className="mx-auto flex h-dvh max-w-[800px] flex-col gap-4 p-4">
         <div className="self-end sm:self-start">
           {isDesktop && (
             <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -298,9 +300,9 @@ function App() {
                   <div className="flex flex-col gap-2">
                     <FormFields application={editingApplication} />
                   </div>
-                  <div className="flex gap-2 flex-col">
+                  <div className="flex flex-col gap-2">
                     <FormSubmitButton isEditing={!!editingApplication} />
-                    <button className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
+                    <button className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
                       Cancel
                     </button>
                   </div>
@@ -327,11 +329,11 @@ function App() {
                   <DrawerFooter className="flex gap-2">
                     <button
                       type="submit"
-                      className="bg-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300"
+                      className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
                     >
                       {editingApplication ? "Update" : "Submit"}
                     </button>
-                    <DrawerClose className="border border-gray-200 text-gray-600 px-4 py-2 rounded-md hover:bg-gray-300">
+                    <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
                       Cancel
                     </DrawerClose>
                   </DrawerFooter>
