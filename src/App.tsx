@@ -274,7 +274,7 @@ const ApplicationForm = ({
         id: crypto.randomUUID(),
         created_at: new Date().toISOString(),
         deleted_at: null,
-        applied_date: new Date().toISOString(),
+        applied_date: new Date().toLocaleDateString(),
         company: formData.get("title") as string,
         status: formData.get("status") as string,
         notes: formData.get("notes") as string,
@@ -342,6 +342,18 @@ function App() {
                     >
                       Cancel
                     </button>
+                    {editingApplication && (
+                      <button
+                        type="button"
+                        className="rounded-md border bg-red-200 px-4 py-2 text-gray-600 hover:bg-red-300"
+                        onClick={() => {
+                          apllicationCollection.delete(editingApplication.id);
+                          setOpen(false);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
                 </ApplicationForm>
               </DialogContent>
