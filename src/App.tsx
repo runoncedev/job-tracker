@@ -85,14 +85,22 @@ const FormFields = ({
         defaultValue={application?.notes || ""}
         className="rounded-md border border-gray-300 p-2"
       />
+      {application?.applied_date && (
+        <p>
+          Applied on{" "}
+          {new Date(application.applied_date).toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })}
+        </p>
+      )}
     </>
   );
 };
 
 const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
   const { pending } = useFormStatus();
-
-  console.log("pending!!", pending);
 
   return (
     <button
@@ -114,6 +122,7 @@ const handleAddJob = async (formData: FormData) => {
     status: typeof status === "string" ? status : "",
     notes: typeof notes === "string" ? notes : "",
     applied_date: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
   });
 };
 
@@ -128,6 +137,7 @@ const handleUpdateJob = async (formData: FormData, applicationId: string) => {
       company: typeof title === "string" ? title : "",
       status: typeof status === "string" ? status : "",
       notes: typeof notes === "string" ? notes : "",
+      updated_at: new Date().toISOString(),
     })
     .eq("id", applicationId);
 };
@@ -304,7 +314,11 @@ function App() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <FormSubmitButton isEditing={!!editingApplication} />
-                    <button className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
+                    <button
+                      type="button"
+                      className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
+                      onClick={() => setOpen(false)}
+                    >
                       Cancel
                     </button>
                   </div>
