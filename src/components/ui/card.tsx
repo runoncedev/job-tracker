@@ -4,7 +4,7 @@ type CardProps = {
 
 function Card({ children }: CardProps) {
   return (
-    <div className="flex min-w-0 items-start justify-between gap-2 rounded-md border border-gray-300 bg-pink-300">
+    <div className="flex w-full items-start justify-between gap-2 rounded-md border border-gray-300 sm:w-[200px]">
       {children}
     </div>
   );

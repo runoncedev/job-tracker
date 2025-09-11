@@ -171,17 +171,14 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
       )}
       {data?.data?.map((application) => (
         <Card>
-          {/* <div className="flex border flex-col gap-2 py-4 pl-4 grow min-w-0"> */}
-          HelloHelloHelloHelloHelloHelloHelloHelloHelloHello
-          {/* <div className="flex gap-4 items-center">
-              <div className="text-lg font-semibold text-gray-900 overflow-hidden text-ellipsis whitespace-nowrap flex-grow">
-                {application.company}
-              </div>
-              <div className="text-white bg-green-500 rounded-md px-2">
-                {application.status}
-              </div>
+          <div className="flex min-w-0 flex-grow flex-col gap-2 py-1.5 pl-1.5">
+            <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+              {application.company}
             </div>
-            <div className="text-gray-500 text-sm">
+            <div className="self-start rounded-md bg-green-500 px-2 text-white">
+              {application.status}
+            </div>
+            <div className="text-sm text-gray-500">
               {new Date(application.applied_date).toLocaleDateString(
                 undefined,
                 {
@@ -190,10 +187,10 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
                   day: "numeric",
                 },
               )}
-            </div> */}
-          {/* </div> */}
-          {/* <button
-            className="text-gray-400 border p-1.5 rounded-sm hover:bg-gray-100 m-2"
+            </div>
+          </div>
+          <button
+            className="m-2 rounded-sm border p-1.5 text-gray-400 hover:bg-gray-100"
             onClick={() => onEditClick(application)}
           >
             <svg
@@ -211,7 +208,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
               <path d="m15 5 4 4" />
             </svg>
-          </button> */}
+          </button>
         </Card>
       ))}
     </div>
