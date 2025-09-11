@@ -283,10 +283,6 @@ function App() {
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
-
-    // if (!newOpen) {
-    //   setEditingApplication(null);
-    // }
   };
 
   return (
