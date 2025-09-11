@@ -175,22 +175,24 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
             <div className="overflow-hidden text-ellipsis whitespace-nowrap">
               {application.company}
             </div>
-            <div className="self-start rounded-md bg-green-500 px-2 text-white">
-              {application.status}
-            </div>
-            <div className="text-sm text-gray-500">
-              {new Date(application.applied_date).toLocaleDateString(
-                undefined,
-                {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                },
-              )}
+            <div className="flex items-center gap-2">
+              <div className="self-start rounded-md bg-green-500 px-2 text-white">
+                {application.status}
+              </div>
+              <div className="text-sm text-gray-500">
+                {new Date(application.applied_date).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  },
+                )}
+              </div>
             </div>
           </div>
           <button
-            className="m-2 rounded-sm border p-1.5 text-gray-400 hover:bg-gray-100"
+            className="m-2 rounded-sm p-1.5 text-gray-400 hover:bg-gray-100"
             onClick={() => onEditClick(application)}
           >
             <svg
