@@ -186,7 +186,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
-                }
+                },
               )}
             </div>
           </div>
