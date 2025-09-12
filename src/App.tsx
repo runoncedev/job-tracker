@@ -345,7 +345,11 @@ function App() {
             </Dialog>
           )}
           {!isDesktop && (
-            <Drawer open={open} onOpenChange={handleOpenChange}>
+            <Drawer
+              open={open}
+              onOpenChange={handleOpenChange}
+              repositionInputs={false}
+            >
               <DrawerTrigger
                 className={addJobButtonClassName}
                 onClick={handleAddClick}
