@@ -1,3 +1,4 @@
+import Button from "@/components/ui/Button";
 import Card from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
@@ -134,9 +135,9 @@ const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
   const { pending } = useFormStatus();
 
   return (
-    <button className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
+    <Button>
       {pending ? "Submitting..." : isEditing ? "Update" : "Submit"}
-    </button>
+    </Button>
   );
 };
 
@@ -275,12 +276,9 @@ const SignInButton = () => {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      disabled={pending}
-      className="w-full rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
-    >
+    <Button disabled={pending} className="w-full">
       {pending ? "Signing in..." : "Sign in"}
-    </button>
+    </Button>
   );
 };
 
@@ -288,12 +286,9 @@ const SignOutButton = () => {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      disabled={pending}
-      className="rounded-md px-4 py-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
-    >
+    <Button disabled={pending} variant="text">
       {pending ? "Signing out..." : "Sign out"}
-    </button>
+    </Button>
   );
 };
 
@@ -379,12 +374,12 @@ function App() {
           {isDesktop && (
             <Dialog open={open} onOpenChange={handleOpenChange}>
               <DialogTrigger asChild>
-                <button
-                  className={addJobButtonClassName}
+                <Button
+                  className="flex items-center gap-2"
                   onClick={handleAddClick}
                 >
                   <AddJobButtonChildren />
-                </button>
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <ApplicationForm
@@ -397,24 +392,24 @@ function App() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <FormSubmitButton isEditing={!!editingApplication} />
-                    <button
+                    <Button
                       type="button"
-                      className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
+                      variant="outlined"
                       onClick={() => setOpen(false)}
                     >
                       Cancel
-                    </button>
+                    </Button>
                     {editingApplication && (
-                      <button
+                      <Button
                         type="button"
-                        className="rounded-md border bg-red-200 px-4 py-2 text-gray-600 hover:bg-red-300"
+                        className="bg-red-200 hover:bg-red-300"
                         onClick={() => {
                           apllicationCollection.delete(editingApplication.id);
                           setOpen(false);
                         }}
                       >
                         Delete
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </ApplicationForm>
@@ -442,26 +437,23 @@ function App() {
                     <FormFields application={editingApplication} />
                   </div>
                   <DrawerFooter className="flex gap-2">
-                    <button
-                      type="submit"
-                      className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
-                    >
+                    <Button type="submit">
                       {editingApplication ? "Update" : "Submit"}
-                    </button>
+                    </Button>
                     <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
                       Cancel
                     </DrawerClose>
                     {editingApplication && (
-                      <button
+                      <Button
                         type="button"
-                        className="rounded-md border bg-red-200 px-4 py-2 text-gray-600 hover:bg-red-300"
+                        className="bg-red-200 hover:bg-red-300"
                         onClick={() => {
                           apllicationCollection.delete(editingApplication.id);
                           setOpen(false);
                         }}
                       >
                         Delete
-                      </button>
+                      </Button>
                     )}
                   </DrawerFooter>
                 </ApplicationForm>
