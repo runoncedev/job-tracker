@@ -374,6 +374,18 @@ function App() {
                     <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
                       Cancel
                     </DrawerClose>
+                    {editingApplication && (
+                      <button
+                        type="button"
+                        className="rounded-md border bg-red-200 px-4 py-2 text-gray-600 hover:bg-red-300"
+                        onClick={() => {
+                          apllicationCollection.delete(editingApplication.id);
+                          setOpen(false);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    )}
                   </DrawerFooter>
                 </ApplicationForm>
               </DrawerContent>
