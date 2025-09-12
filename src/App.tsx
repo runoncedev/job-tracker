@@ -241,9 +241,9 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               </div>
               <div className="flex items-center gap-2">
                 <div
-                  className={`self-start rounded-md ${status?.color} px-2 text-white`}
+                  className={`self-start rounded-md ${status?.color || "bg-gray-500"} px-2 text-white`}
                 >
-                  {status?.label}
+                  {status?.label || application.status}
                 </div>
                 <div className="text-sm text-gray-500">
                   {new Date(application.applied_date).toLocaleDateString(
