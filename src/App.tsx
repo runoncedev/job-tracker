@@ -244,21 +244,6 @@ const ApplicationForm = ({
   application,
   onSuccess,
 }: ApplicationFormProps) => {
-  // const mutation = useMutation({
-  //   mutationFn: (formData: FormData) => {
-  //     if (application) {
-  //       return handleUpdateJob(formData, application.id);
-  //     } else {
-  //       return handleAddJob(formData);
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["applications"] });
-
-  //     onSuccess();
-  //   },
-  // });
-
   const mutate = (formData: FormData) => {
     onSuccess();
 
@@ -267,18 +252,18 @@ const ApplicationForm = ({
         draft.company = formData.get("title") as string;
         draft.status = formData.get("status") as string;
         draft.notes = formData.get("notes") as string;
-        draft.updated_at = new Date().toISOString();
+        draft.updated_at = new Date().toUTCString();
       });
     } else {
       apllicationCollection.insert({
         id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
+        created_at: new Date().toUTCString(),
         deleted_at: null,
-        applied_date: new Date().toLocaleDateString(),
+        applied_date: new Date().toUTCString(),
         company: formData.get("title") as string,
         status: formData.get("status") as string,
         notes: formData.get("notes") as string,
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toUTCString(),
       });
     }
   };
