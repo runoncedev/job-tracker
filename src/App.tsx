@@ -15,6 +15,7 @@ import { createCollection, useLiveQuery } from "@tanstack/react-db";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { Toaster } from "sonner";
 import type { Database, Tables } from "../database.types";
 
 const supabaseUrl = "https://scxwpgmelmbwtljbvtwp.supabase.co";
@@ -131,16 +132,6 @@ const FormFields = ({
   );
 };
 
-const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button>
-      {pending ? "Submitting..." : isEditing ? "Update" : "Submit"}
-    </Button>
-  );
-};
-
 type ApplicationsProps = {
   onEditClick: (application: Tables<"applications">) => void;
 };
@@ -202,10 +193,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               </div>
             </div>
           </div>
-          <button
-            className="m-2 rounded-sm p-1.5 text-gray-400 hover:bg-gray-100"
-            onClick={() => onEditClick(application)}
-          >
+          <Button onClick={() => onEditClick(application)} variant="icon">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -221,7 +209,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
               <path d="m15 5 4 4" />
             </svg>
-          </button>
+          </Button>
         </Card>
       ))}
     </div>
@@ -241,7 +229,7 @@ const ApplicationForm = ({
   application,
   onSuccess,
 }: ApplicationFormProps) => {
-  const mutate = (formData: FormData) => {
+  const mutate = async (formData: FormData) => {
     onSuccess();
 
     if (application) {
@@ -369,6 +357,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster />
       <div className="mx-auto flex h-dvh max-w-[800px] flex-col gap-4 p-4">
         <div className="flex w-full justify-between gap-2 self-end sm:self-start">
           {isDesktop && (
@@ -391,7 +380,7 @@ function App() {
                     <FormFields application={editingApplication} />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <FormSubmitButton isEditing={!!editingApplication} />
+                    <Button>{editingApplication ? "Update" : "Submit"}</Button>
                     <Button
                       type="button"
                       variant="outlined"
