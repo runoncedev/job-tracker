@@ -18,6 +18,39 @@ import { useFormStatus } from "react-dom";
 import { toast, Toaster } from "sonner";
 import type { Database, Tables } from "../database.types";
 
+const statuses = [
+  {
+    label: "Apply",
+    value: "apply",
+    color: "bg-blue-500",
+  },
+  {
+    label: "Applied",
+    value: "applied",
+    color: "bg-green-500",
+  },
+  {
+    label: "Interviewing",
+    value: "interviewing",
+    color: "bg-yellow-500",
+  },
+  {
+    label: "Offer",
+    value: "offer",
+    color: "bg-purple-500",
+  },
+  {
+    label: "Rejected",
+    value: "rejected",
+    color: "bg-red-500",
+  },
+  {
+    label: "Discarded",
+    value: "discarded",
+    color: "bg-gray-500",
+  },
+];
+
 const supabaseUrl = "https://scxwpgmelmbwtljbvtwp.supabase.co";
 const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
@@ -129,8 +162,11 @@ const FormFields = ({
         defaultValue={application?.status || "active"}
         className="rounded-md border border-gray-300 p-2"
       >
-        <option value="active">Active</option>
-        <option value="inactive">Inactive</option>
+        {statuses.map((status) => (
+          <option key={status.value} value={status.value}>
+            {status.label}
+          </option>
+        ))}
       </select>
       <label htmlFor="notes">Notes</label>
       <textarea
@@ -192,47 +228,55 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
       {!isLiveLoading && liveData?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
-      {liveData?.map((application) => (
-        <Card>
-          <div className="flex min-w-0 flex-grow flex-col gap-2 py-1.5 pl-1.5">
-            <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-              {application.company}
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="self-start rounded-md bg-green-500 px-2 text-white">
-                {application.status}
+      {liveData?.map((application) => {
+        const status = statuses.find(
+          (status) => status.value === application.status,
+        );
+
+        return (
+          <Card>
+            <div className="flex min-w-0 flex-grow flex-col gap-2 py-1.5 pl-1.5">
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+                {application.company}
               </div>
-              <div className="text-sm text-gray-500">
-                {new Date(application.applied_date).toLocaleDateString(
-                  undefined,
-                  {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  },
-                )}
+              <div className="flex items-center gap-2">
+                <div
+                  className={`self-start rounded-md ${status?.color} px-2 text-white`}
+                >
+                  {status?.label}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {new Date(application.applied_date).toLocaleDateString(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    },
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          <Button onClick={() => onEditClick(application)} variant="icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              className="lucide lucide-pencil-icon lucide-pencil"
-            >
-              <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
-              <path d="m15 5 4 4" />
-            </svg>
-          </Button>
-        </Card>
-      ))}
+            <Button onClick={() => onEditClick(application)} variant="icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="lucide lucide-pencil-icon lucide-pencil"
+              >
+                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                <path d="m15 5 4 4" />
+              </svg>
+            </Button>
+          </Card>
+        );
+      })}
     </div>
   );
 };
