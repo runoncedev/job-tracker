@@ -15,7 +15,7 @@ import { createCollection, useLiveQuery } from "@tanstack/react-db";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Toaster } from "sonner";
+import { toast, Toaster } from "sonner";
 import type { Database, Tables } from "../database.types";
 
 const supabaseUrl = "https://scxwpgmelmbwtljbvtwp.supabase.co";
@@ -29,10 +29,14 @@ const apllicationCollection = createCollection<Tables<"applications">>(
     queryClient,
     queryKey: ["applications"],
     queryFn: async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("applications")
         .select("*")
         .order("updated_at", { ascending: false });
+
+      if (error) {
+        toast.error("Failed to fetch applications");
+      }
 
       return data || [];
     },
@@ -41,20 +45,37 @@ const apllicationCollection = createCollection<Tables<"applications">>(
     onInsert: async ({ transaction }) => {
       const { modified: newApplication } = transaction.mutations[0];
 
-      await supabase.from("applications").insert(newApplication);
+      const { error } = await supabase
+        .from("applications")
+        .insert(newApplication);
+
+      if (error) {
+        toast.error("Failed to insert application");
+      }
     },
     onUpdate: async ({ transaction }) => {
       const { original, modified } = transaction.mutations[0];
 
-      await supabase
+      const { error } = await supabase
         .from("applications")
         .update(modified)
         .eq("id", original.id);
+
+      if (error) {
+        toast.error("Failed to update application");
+      }
     },
     onDelete: async ({ transaction }) => {
       const { original } = transaction.mutations[0];
 
-      await supabase.from("applications").delete().eq("id", original.id);
+      const { error } = await supabase
+        .from("applications")
+        .delete()
+        .eq("id", original.id);
+
+      if (error) {
+        toast.error("Failed to delete application");
+      }
     },
   }),
 );
