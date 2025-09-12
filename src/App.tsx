@@ -1,3 +1,4 @@
+import Card from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Drawer,
@@ -7,13 +8,11 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { useState } from "react";
-
-import Card from "@/components/ui/card";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type Session } from "@supabase/supabase-js";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, useLiveQuery } from "@tanstack/react-db";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import type { Database, Tables } from "../database.types";
 
@@ -135,10 +134,7 @@ const FormSubmitButton = ({ isEditing }: { isEditing?: boolean }) => {
   const { pending } = useFormStatus();
 
   return (
-    <button
-      className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
-      disabled={pending}
-    >
+    <button className="rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
       {pending ? "Submitting..." : isEditing ? "Update" : "Submit"}
     </button>
   );
@@ -275,11 +271,54 @@ const ApplicationForm = ({
   );
 };
 
+const SignInButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      disabled={pending}
+      className="w-full rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300"
+    >
+      {pending ? "Signing in..." : "Sign in"}
+    </button>
+  );
+};
+
+const SignOutButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      disabled={pending}
+      className="rounded-md px-4 py-2 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+    >
+      {pending ? "Signing out..." : "Sign out"}
+    </button>
+  );
+};
+
 function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const [editingApplication, setEditingApplication] =
     useState<Tables<"applications"> | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleEditClick = (application: Tables<"applications">) => {
     setEditingApplication(application);
@@ -295,10 +334,48 @@ function App() {
     setOpen(newOpen);
   };
 
+  // if (!session) {
+  //   return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
+  // }
+
+  if (!session) {
+    return (
+      <div className="flex h-dvh items-center justify-center px-4">
+        <form
+          action={async () => {
+            await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+          }}
+          className="w-full max-w-md space-y-4"
+        >
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            className="w-full rounded-md border border-gray-300 p-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            className="w-full rounded-md border border-gray-300 p-2"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <SignInButton />
+        </form>
+      </div>
+    );
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="mx-auto flex h-dvh max-w-[800px] flex-col gap-4 p-4">
-        <div className="self-end sm:self-start">
+        <div className="flex w-full justify-between gap-2 self-end sm:self-start">
           {isDesktop && (
             <Dialog open={open} onOpenChange={handleOpenChange}>
               <DialogTrigger asChild>
@@ -391,6 +468,13 @@ function App() {
               </DrawerContent>
             </Drawer>
           )}
+          <form
+            action={async () => {
+              await supabase.auth.signOut();
+            }}
+          >
+            <SignOutButton />
+          </form>
         </div>
         <Applications onEditClick={handleEditClick} />
       </div>
