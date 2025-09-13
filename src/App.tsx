@@ -149,7 +149,7 @@ const FormFields = ({
         name="title"
         type="text"
         defaultValue={application?.company || ""}
-        className="rounded-md border border-gray-300 p-2"
+        className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
         required
       />
       <label htmlFor="status">Status</label>
@@ -157,7 +157,7 @@ const FormFields = ({
         id="status"
         name="status"
         defaultValue={application?.status || "active"}
-        className="rounded-md border border-gray-300 p-2"
+        className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
       >
         {statuses.map((status) => (
           <option key={status.value} value={status.value}>
@@ -170,7 +170,7 @@ const FormFields = ({
         id="notes"
         name="notes"
         defaultValue={application?.notes || ""}
-        className="rounded-md border border-gray-300 p-2"
+        className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
       />
       {application?.applied_date && (
         <p>
@@ -487,7 +487,7 @@ function App() {
                     <Button type="submit">
                       {editingApplication ? "Update" : "Submit"}
                     </Button>
-                    <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300">
+                    <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700">
                       Cancel
                     </DrawerClose>
                     {editingApplication && (
