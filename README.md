@@ -14,7 +14,7 @@ Supabase creates a full REST API for querying your tables. It also offers authen
 
 ### Tailwind CSS
 
-Pairs very well with LLMs, it's very fast to compile and easy to understand. With some external tooling like the Prettier plugin and the IDE extension, the DX is really good.
+Pairs very well with LLMs and it's very fast. Implementing dark mode is easy. It comes with some external tooling like the Prettier plugin and the IDE extension, which makes the DX is really good.
 
 ### React
 
