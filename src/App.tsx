@@ -428,7 +428,7 @@ function App() {
                   <AddJobButtonChildren />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent className="sm:max-w-[425px] dark:border-slate-700 dark:bg-slate-900">
                 <ApplicationForm
                   className="flex flex-col gap-4"
                   application={editingApplication}
