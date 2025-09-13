@@ -113,9 +113,6 @@ const apllicationCollection = createCollection<Tables<"applications">>(
   }),
 );
 
-const addJobButtonClassName =
-  "bg-gray-200 text-gray-600 px-4 py-2 rounded-md flex items-center gap-2 hover:bg-gray-300";
-
 const AddJobButtonChildren = () => {
   return (
     <>
@@ -382,10 +379,6 @@ function App() {
     setOpen(newOpen);
   };
 
-  // if (!session) {
-  //   return <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />;
-  // }
-
   if (!session) {
     return (
       <div className="flex h-dvh items-center justify-center px-4">
@@ -477,7 +470,7 @@ function App() {
               repositionInputs={false}
             >
               <DrawerTrigger
-                className={addJobButtonClassName}
+                className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 onClick={handleAddClick}
               >
                 <AddJobButtonChildren />
