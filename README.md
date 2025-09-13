@@ -10,7 +10,7 @@ Used TanStack DB and TanStack Query to sync data locally with the remote databas
 
 ### Supabase
 
-Supabase creates a full REST API for querying your tables. It has a CLI tool to generate types from your database schemas. It also offers authentication mechanisms that are very easy to implement.
+Supabase creates a full REST API for querying your tables. It has a CLI tool to generate types from your database schemas. It also offers authentication mechanisms that are easy to implement and make it secure.
 
 ### Tailwind CSS
 
