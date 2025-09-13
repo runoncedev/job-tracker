@@ -242,7 +242,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
                 >
                   {status?.label || application.status}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500 dark:text-slate-300">
                   {new Date(application.applied_date).toLocaleDateString(
                     undefined,
                     {
