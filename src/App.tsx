@@ -232,13 +232,13 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
 
         return (
           <Card>
-            <div className="flex min-w-0 flex-grow flex-col gap-2 py-1.5 pl-1.5">
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+            <div className="flex min-w-0 flex-grow flex-col gap-2 py-2.5 pl-2.5">
+              <div className="overflow-hidden font-semibold text-ellipsis whitespace-nowrap">
                 {application.company}
               </div>
               <div className="flex items-center gap-2">
                 <div
-                  className={`self-start rounded-md ${status?.color || "bg-gray-500"} px-2 text-white`}
+                  className={`self-start rounded text-sm ${status?.color || "bg-gray-500"} px-2 text-white`}
                 >
                   {status?.label || application.status}
                 </div>
