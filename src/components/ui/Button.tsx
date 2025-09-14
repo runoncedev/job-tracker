@@ -6,7 +6,7 @@ const variantClasses = {
   outlined:
     "rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700",
   text: "rounded-md px-4 py-2 text-gray-600 hover:bg-gray-300 dark:text-slate-300 dark:hover:bg-slate-700",
-  icon: "m-2 rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700",
+  icon: "m-2 rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 dark:text-slate-300 dark:hover:bg-slate-700 hover:bg-gray-200",
 } as const;
 
 type ButtonProps = {

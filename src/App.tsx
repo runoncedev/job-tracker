@@ -22,32 +22,32 @@ const statuses = [
   {
     label: "Apply",
     value: "apply",
-    color: "bg-blue-500",
+    color: "border-blue-500",
   },
   {
     label: "Applied",
     value: "applied",
-    color: "bg-green-500",
+    color: "border-green-500",
   },
   {
     label: "Interviewing",
     value: "interviewing",
-    color: "bg-yellow-500",
+    color: "border-yellow-500",
   },
   {
     label: "Offer",
     value: "offer",
-    color: "bg-purple-500",
+    color: "border-purple-500",
   },
   {
     label: "Rejected",
     value: "rejected",
-    color: "bg-red-500",
+    color: "border-red-500",
   },
   {
     label: "Discarded",
     value: "discarded",
-    color: "bg-gray-500",
+    color: "border-gray-500",
   },
 ];
 
@@ -238,7 +238,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
               </div>
               <div className="flex items-center gap-2">
                 <div
-                  className={`self-start rounded text-sm ${status?.color || "bg-gray-500"} px-2 text-white`}
+                  className={`self-start rounded border text-sm ${status?.color || "border-gray-500"} px-2 text-gray-500 dark:text-slate-200`}
                 >
                   {status?.label || application.status}
                 </div>
@@ -395,7 +395,7 @@ function App() {
             type="email"
             placeholder="Email"
             required
-            className="w-full rounded-md border border-gray-300 p-2"
+            className="w-full rounded-md border border-gray-300 p-2 dark:border-slate-700"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -403,7 +403,7 @@ function App() {
             type="password"
             placeholder="Password"
             required
-            className="w-full rounded-md border border-gray-300 p-2"
+            className="w-full rounded-md border border-gray-300 p-2 dark:border-slate-700"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
