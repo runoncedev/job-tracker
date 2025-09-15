@@ -241,8 +241,34 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
         return (
           <Card>
             <div className="flex min-w-0 flex-grow flex-col gap-2 py-2.5 pl-2.5">
-              <div className="overflow-hidden font-semibold text-ellipsis whitespace-nowrap">
-                {application.company}
+              <div className="flex items-center gap-2">
+                <div className="overflow-hidden font-semibold text-ellipsis whitespace-nowrap">
+                  {application.company}
+                </div>
+                {application.url && (
+                  <a
+                    href={application.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      className="lucide lucide-link2-icon lucide-link-2 stroke-gray-400 transition hover:stroke-gray-500 dark:stroke-slate-200 dark:hover:stroke-slate-300"
+                    >
+                      <path d="M15 3h6v6" />
+                      <path d="M10 14 21 3" />
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    </svg>
+                  </a>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <div
@@ -305,6 +331,7 @@ const ApplicationForm = ({
     if (application) {
       apllicationCollection.update(application.id, (draft) => {
         draft.company = formData.get("title") as string;
+        draft.url = formData.get("url") as string;
         draft.status = formData.get("status") as string;
         draft.notes = formData.get("notes") as string;
         draft.updated_at = new Date().toUTCString();
