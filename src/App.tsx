@@ -57,13 +57,13 @@ const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 const queryClient = new QueryClient();
 
-const apllicationCollection = createCollection<Tables<"applications">>(
+const apllicationCollection = createCollection<Tables<"application">>(
   queryCollectionOptions({
     queryClient,
-    queryKey: ["applications"],
+    queryKey: ["application"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("applications")
+        .from("application")
         .select("*")
         .order("updated_at", { ascending: false });
 
@@ -79,7 +79,7 @@ const apllicationCollection = createCollection<Tables<"applications">>(
       const { modified: newApplication } = transaction.mutations[0];
 
       const { error } = await supabase
-        .from("applications")
+        .from("application")
         .insert(newApplication);
 
       if (error) {
@@ -90,7 +90,7 @@ const apllicationCollection = createCollection<Tables<"applications">>(
       const { original, modified } = transaction.mutations[0];
 
       const { error } = await supabase
-        .from("applications")
+        .from("application")
         .update(modified)
         .eq("id", original.id);
 
@@ -102,7 +102,7 @@ const apllicationCollection = createCollection<Tables<"applications">>(
       const { original } = transaction.mutations[0];
 
       const { error } = await supabase
-        .from("applications")
+        .from("application")
         .delete()
         .eq("id", original.id);
 
@@ -139,7 +139,7 @@ const AddJobButtonChildren = () => {
 const FormFields = ({
   application,
 }: {
-  application?: Tables<"applications"> | null;
+  application?: Tables<"application"> | null;
 }) => {
   return (
     <>
@@ -151,6 +151,14 @@ const FormFields = ({
         defaultValue={application?.company || ""}
         className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
         required
+      />
+      <label htmlFor="url">URL</label>
+      <input
+        id="url"
+        name="url"
+        type="url"
+        defaultValue={application?.url || ""}
+        className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
       />
       <label htmlFor="status">Status</label>
       <select
@@ -187,7 +195,7 @@ const FormFields = ({
 };
 
 type ApplicationsProps = {
-  onEditClick: (application: Tables<"applications">) => void;
+  onEditClick: (application: Tables<"application">) => void;
 };
 
 const Applications = ({ onEditClick }: ApplicationsProps) => {
@@ -281,7 +289,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
 type ApplicationFormProps = {
   children: React.ReactNode;
   className?: string;
-  application?: Tables<"applications"> | null;
+  application?: Tables<"application"> | null;
   onSuccess: () => void;
 };
 
@@ -307,6 +315,7 @@ const ApplicationForm = ({
         created_at: new Date().toUTCString(),
         deleted_at: null,
         applied_date: new Date().toUTCString(),
+        url: formData.get("url") as string,
         company: formData.get("title") as string,
         status: formData.get("status") as string,
         notes: formData.get("notes") as string,
@@ -348,7 +357,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const [editingApplication, setEditingApplication] =
-    useState<Tables<"applications"> | null>(null);
+    useState<Tables<"application"> | null>(null);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
@@ -365,7 +374,7 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleEditClick = (application: Tables<"applications">) => {
+  const handleEditClick = (application: Tables<"application">) => {
     setEditingApplication(application);
     setOpen(true);
   };
