@@ -229,7 +229,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
   }
 
   return (
-    <div className="flex flex-grow flex-col flex-wrap items-stretch gap-2 sm:flex-grow-0 sm:flex-row sm:items-start">
+    <div className="mx-auto flex w-full max-w-full flex-grow flex-col flex-wrap items-stretch gap-6 sm:max-w-[1480px] sm:flex-grow-0 sm:flex-row sm:items-start">
       {!isLiveLoading && liveData?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
@@ -452,8 +452,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
-      <div className="mx-auto flex h-dvh max-w-[800px] flex-col gap-4 p-4">
-        <div className="flex w-full justify-between gap-2 self-end sm:self-start">
+      <div className="mx-auto flex h-dvh flex-col gap-8 p-4">
+        <div className="mx-auto flex w-full max-w-[800px] justify-between gap-2 self-end sm:self-start">
           {isDesktop && (
             <Dialog open={open} onOpenChange={handleOpenChange}>
               <DialogTrigger asChild>
