@@ -229,7 +229,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
   }
 
   return (
-    <div className="flex flex-col flex-wrap items-stretch gap-6 sm:flex-row sm:items-start">
+    <div className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {!isLiveLoading && liveData?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
@@ -338,7 +338,7 @@ const ApplicationForm = ({
       });
     } else {
       apllicationCollection.insert({
-        id: crypto.randomUUID(),
+        id: "random-" + crypto.randomUUID(),
         created_at: new Date().toUTCString(),
         deleted_at: null,
         applied_date: new Date().toUTCString(),
@@ -454,7 +454,7 @@ function App() {
       <Toaster />
       <div className="mx-auto flex min-h-dvh flex-col">
         <div className="mx-auto flex w-full justify-between gap-2 self-end border-b p-4 pb-4 sm:self-start dark:border-slate-600">
-          <div className="mx-auto flex w-full max-w-[800px] justify-between gap-2">
+          <div className="mx-auto flex w-full max-w-[1024px] justify-between gap-2 sm:px-4">
             {isDesktop && (
               <Dialog open={open} onOpenChange={handleOpenChange}>
                 <DialogTrigger asChild>
