@@ -65,7 +65,7 @@ const apllicationCollection = createCollection<Tables<"application">>(
       const { data, error } = await supabase
         .from("application")
         .select("*")
-        .order("updated_at", { ascending: false });
+        .order("applied_date", { ascending: false });
 
       if (error) {
         toast.error("Failed to fetch applications");
@@ -103,7 +103,7 @@ const apllicationCollection = createCollection<Tables<"application">>(
 
       const { error } = await supabase
         .from("application")
-        .delete()
+        .update({ deleted_at: new Date().toUTCString() })
         .eq("id", original.id);
 
       if (error) {
@@ -180,16 +180,16 @@ const FormFields = ({
         defaultValue={application?.notes || ""}
         className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
       />
-      {application?.applied_date && (
-        <p>
-          Applied on{" "}
-          {new Date(application.applied_date).toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </p>
-      )}
+      <label htmlFor="applied_date">Applied date</label>
+      <input
+        id="applied_date"
+        name="applied_date"
+        type="date"
+        defaultValue={
+          application?.applied_date || new Date().toISOString().split("T")[0]
+        }
+        className="rounded-md border border-gray-300 p-2 dark:border-slate-700"
+      />
     </>
   );
 };
@@ -202,7 +202,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
   const { data: liveData, isLoading: isLiveLoading } = useLiveQuery((q) =>
     q
       .from({ application: apllicationCollection })
-      .orderBy(({ application }) => application.updated_at, {
+      .orderBy(({ application }) => application.applied_date, {
         direction: "desc",
       }),
   );
@@ -334,14 +334,15 @@ const ApplicationForm = ({
         draft.url = formData.get("url") as string;
         draft.status = formData.get("status") as string;
         draft.notes = formData.get("notes") as string;
+        draft.applied_date = formData.get("applied_date") as string;
         draft.updated_at = new Date().toUTCString();
       });
     } else {
       apllicationCollection.insert({
-        id: "random-" + crypto.randomUUID(),
+        id: crypto.randomUUID(),
         created_at: new Date().toUTCString(),
         deleted_at: null,
-        applied_date: new Date().toUTCString(),
+        applied_date: formData.get("applied_date") as string,
         url: formData.get("url") as string,
         company: formData.get("title") as string,
         status: formData.get("status") as string,
