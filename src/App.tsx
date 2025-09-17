@@ -229,7 +229,7 @@ const Applications = ({ onEditClick }: ApplicationsProps) => {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-full flex-grow flex-col flex-wrap items-stretch gap-6 sm:max-w-[1480px] sm:flex-grow-0 sm:flex-row sm:items-start">
+    <div className="flex flex-col flex-wrap items-stretch gap-6 sm:flex-row sm:items-start">
       {!isLiveLoading && liveData?.length === 0 && (
         <div className="text-gray-500">No applications found</div>
       )}
@@ -452,106 +452,112 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
-      <div className="mx-auto flex h-dvh flex-col gap-8 p-4">
-        <div className="mx-auto flex w-full max-w-[800px] justify-between gap-2 self-end sm:self-start">
-          {isDesktop && (
-            <Dialog open={open} onOpenChange={handleOpenChange}>
-              <DialogTrigger asChild>
-                <Button
-                  className="flex items-center gap-2"
+      <div className="mx-auto flex min-h-dvh flex-col">
+        <div className="mx-auto flex w-full justify-between gap-2 self-end border-b p-4 pb-4 sm:self-start dark:border-slate-600">
+          <div className="mx-auto flex w-full max-w-[800px] justify-between gap-2">
+            {isDesktop && (
+              <Dialog open={open} onOpenChange={handleOpenChange}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="flex items-center gap-2"
+                    onClick={handleAddClick}
+                  >
+                    <AddJobButtonChildren />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px] dark:border-slate-700 dark:bg-slate-900">
+                  <ApplicationForm
+                    className="flex flex-col gap-4"
+                    application={editingApplication}
+                    onSuccess={() => setOpen(false)}
+                  >
+                    <div className="flex flex-col gap-2">
+                      <FormFields application={editingApplication} />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Button>
+                        {editingApplication ? "Update" : "Submit"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outlined"
+                        onClick={() => setOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      {editingApplication && (
+                        <Button
+                          type="button"
+                          className="bg-red-200 hover:bg-red-300"
+                          onClick={() => {
+                            apllicationCollection.delete(editingApplication.id);
+                            setOpen(false);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  </ApplicationForm>
+                </DialogContent>
+              </Dialog>
+            )}
+            {!isDesktop && (
+              <Drawer
+                open={open}
+                onOpenChange={handleOpenChange}
+                repositionInputs={false}
+              >
+                <DrawerTrigger
+                  className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                   onClick={handleAddClick}
                 >
                   <AddJobButtonChildren />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px] dark:border-slate-700 dark:bg-slate-900">
-                <ApplicationForm
-                  className="flex flex-col gap-4"
-                  application={editingApplication}
-                  onSuccess={() => setOpen(false)}
-                >
-                  <div className="flex flex-col gap-2">
-                    <FormFields application={editingApplication} />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <Button>{editingApplication ? "Update" : "Submit"}</Button>
-                    <Button
-                      type="button"
-                      variant="outlined"
-                      onClick={() => setOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    {editingApplication && (
-                      <Button
-                        type="button"
-                        className="bg-red-200 hover:bg-red-300"
-                        onClick={() => {
-                          apllicationCollection.delete(editingApplication.id);
-                          setOpen(false);
-                        }}
-                      >
-                        Delete
+                </DrawerTrigger>
+                <DrawerContent>
+                  <ApplicationForm
+                    application={editingApplication}
+                    onSuccess={() => setOpen(false)}
+                  >
+                    <div className="flex flex-col gap-2 px-4">
+                      <FormFields application={editingApplication} />
+                    </div>
+                    <DrawerFooter className="flex gap-2">
+                      <Button type="submit">
+                        {editingApplication ? "Update" : "Submit"}
                       </Button>
-                    )}
-                  </div>
-                </ApplicationForm>
-              </DialogContent>
-            </Dialog>
-          )}
-          {!isDesktop && (
-            <Drawer
-              open={open}
-              onOpenChange={handleOpenChange}
-              repositionInputs={false}
+                      <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700">
+                        Cancel
+                      </DrawerClose>
+                      {editingApplication && (
+                        <Button
+                          type="button"
+                          className="bg-red-200 hover:bg-red-300"
+                          onClick={() => {
+                            apllicationCollection.delete(editingApplication.id);
+                            setOpen(false);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </DrawerFooter>
+                  </ApplicationForm>
+                </DrawerContent>
+              </Drawer>
+            )}
+            <form
+              action={async () => {
+                await supabase.auth.signOut();
+              }}
             >
-              <DrawerTrigger
-                className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-                onClick={handleAddClick}
-              >
-                <AddJobButtonChildren />
-              </DrawerTrigger>
-              <DrawerContent>
-                <ApplicationForm
-                  application={editingApplication}
-                  onSuccess={() => setOpen(false)}
-                >
-                  <div className="flex flex-col gap-2 px-4">
-                    <FormFields application={editingApplication} />
-                  </div>
-                  <DrawerFooter className="flex gap-2">
-                    <Button type="submit">
-                      {editingApplication ? "Update" : "Submit"}
-                    </Button>
-                    <DrawerClose className="rounded-md border border-gray-200 px-4 py-2 text-gray-600 hover:bg-gray-300 dark:border-slate-700 dark:text-white dark:hover:bg-slate-700">
-                      Cancel
-                    </DrawerClose>
-                    {editingApplication && (
-                      <Button
-                        type="button"
-                        className="bg-red-200 hover:bg-red-300"
-                        onClick={() => {
-                          apllicationCollection.delete(editingApplication.id);
-                          setOpen(false);
-                        }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </DrawerFooter>
-                </ApplicationForm>
-              </DrawerContent>
-            </Drawer>
-          )}
-          <form
-            action={async () => {
-              await supabase.auth.signOut();
-            }}
-          >
-            <SignOutButton />
-          </form>
+              <SignOutButton />
+            </form>
+          </div>
         </div>
-        <Applications onEditClick={handleEditClick} />
+        <div className="mx-auto h-full w-full max-w-full flex-grow p-4 sm:max-w-[1024px] lg:border-r lg:border-l dark:border-slate-600">
+          <Applications onEditClick={handleEditClick} />
+        </div>
       </div>
     </QueryClientProvider>
   );
