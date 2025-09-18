@@ -602,7 +602,13 @@ function App() {
                           type="button"
                           className="bg-red-200 hover:bg-red-300"
                           onClick={() => {
-                            apllicationCollection.delete(editingApplication.id);
+                            apllicationCollection.update(
+                              editingApplication.id,
+                              (draft) => {
+                                draft.deleted_at = new Date().toUTCString();
+                              },
+                            );
+
                             setOpen(false);
                           }}
                         >
